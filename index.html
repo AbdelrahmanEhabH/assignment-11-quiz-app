@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="QuizMaster - The ultimate trivia challenge." />
+  <title>QuizMaster</title>
+  <link rel="icon" href="./images/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="./CSS/style.css" />
+</head>
+
+<body>
+  <main class="qm-app" role="main">
+    <header class="qm-header">
+      <h1 class="qm-logo"><i class="fa-solid fa-brain"></i> QuizMaster</h1>
+      <p class="qm-tagline">Test Your Knowledge</p>
+    </header>
+
+
+    <form class="qm-card qm-setup" id="quizOptions">
+      <div class="qm-form-group">
+        <label class="qm-label" for="playerName">
+          <i class="fa-solid fa-user"></i> Player Name
+        </label>
+        <input type="text" class="qm-input" id="playerName" placeholder="Enter your name" maxlength="20" />
+      </div>
+
+      <div class="qm-form-group">
+        <label class="qm-label">
+          <i class="fa-solid fa-layer-group"></i> Select Category
+        </label>
+        <div class="qm-select" id="categorySelect" data-value="">
+          <div class="qm-select-trigger">
+            <span class="qm-select-icon"><i class="fa-solid fa-shuffle"></i></span>
+            <span class="qm-select-text">Random Category</span>
+            <span class="qm-select-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+          </div>
+          <div class="qm-select-options">
+            <div class="qm-select-option" data-value="Random Category">
+              <i class="fa-solid fa-shuffle"></i> Random Category
+            </div>
+            <div class="qm-select-option" data-value="General Knowledge">
+              <i class="fa-solid fa-brain"></i> General Knowledge
+            </div>
+            <div class="qm-select-option" data-value="Computers">
+              <i class="fa-solid fa-laptop-code"></i> Computers
+            </div>
+            <div class="qm-select-option" data-value="Sports">
+              <i class="fa-solid fa-futbol"></i> Sports
+            </div>
+            <div class="qm-select-option" data-value="History">
+              <i class="fa-solid fa-landmark"></i> History
+            </div>
+            <div class="qm-select-option" data-value="Science">
+              <i class="fa-solid fa-flask"></i> Science
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="categoryMenu" name="category" value="" />
+      </div>
+
+      <div class="qm-form-group" id="difficulty">
+        <label class="qm-label">
+          <i class="fa-solid fa-gauge-high"></i> Difficulty Level
+        </label>
+        <div class="qm-select" id="difficultySelect" data-value="easy">
+          <div class="qm-select-trigger">
+            <span class="qm-select-icon"><i class="fa-solid fa-face-smile"></i></span>
+            <span class="qm-select-text">Easy Mode</span>
+            <span class="qm-select-arrow"><i class="fa-solid fa-chevron-down"></i></span>
+          </div>
+          <div class="qm-select-options">
+            <div class="qm-select-option qm-selected" data-value="easy">
+              <i class="fa-solid fa-face-smile"></i> Easy Mode
+            </div>
+            <div class="qm-select-option" data-value="medium">
+              <i class="fa-solid fa-face-meh"></i> Medium Mode
+            </div>
+            <div class="qm-select-option" data-value="hard">
+              <i class="fa-solid fa-skull"></i> Hard Mode
+            </div>
+          </div>
+        </div>
+        <input type="hidden" id="difficultyOptions" name="difficulty" value="easy" />
+      </div>
+
+      <div class="qm-form-group" id="number-question">
+        <label class="qm-label" for="questionsNumber">
+          <i class="fa-solid fa-bolt"></i> Number of Questions
+        </label>
+        <div class="qm-number-wrapper">
+          <input type="number" class="qm-input" id="questionsNumber" placeholder="Enter 1-50" min="1" max="50"
+            value="10" />
+          <div class="qm-number-controls">
+            <button type="button" class="qm-number-btn" data-action="increment">
+              <i class="fa-solid fa-chevron-up"></i>
+            </button>
+            <button type="button" class="qm-number-btn" data-action="decrement">
+              <i class="fa-solid fa-chevron-down"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="qm-form-error qm-hidden" id="formError">
+        <i class="fa-solid fa-circle-exclamation"></i> Please enter the number of questions.
+      </div>
+
+      <button type="button" class="qm-btn qm-btn-primary" id="startQuiz">
+        <i class="fa-solid fa-play"></i> Start Game
+      </button>
+    </form>
+
+    <div class="qm-questions-container" id="questionsContainer">
+      <div class="qm-loading qm-hidden">
+        <div class="qm-spinner"></div>
+        <p class="qm-loading-text">Loading Questions...</p>
+      </div>
+
+      <div class="qm-card qm-question-card qm-hidden">
+        <div class="qm-progress-wrapper">
+          <div class="qm-progress-header">
+            <span class="qm-progress-label"><i class="fa-solid fa-bolt"></i> Progress</span>
+            <span class="qm-progress-value">Question 1/10</span>
+          </div>
+          <div class="qm-progress-bar">
+            <div class="qm-progress-fill" style="width: 10%"></div>
+          </div>
+        </div>
+
+        <div class="qm-stats-row">
+          <div class="qm-badge qm-badge-category">
+            <i class="fa-solid fa-bookmark"></i>
+            <span id="category-name">General Knowledge</span>
+          </div>
+          <div class="qm-badge qm-badge-difficulty qm-easy">
+            <i class="fa-solid fa-face-smile"></i>
+            <span id="difficulty-sele">easy</span>
+          </div>
+          <div class="qm-badge qm-badge-timer">
+            <i class="fa-solid fa-stopwatch"></i>
+            <span class="qm-timer-value">15</span>s
+          </div>
+          <div class="qm-badge qm-badge-counter">
+            <i class="fa-solid fa-gamepad"></i>
+            <span>1/10</span>
+          </div>
+        </div>
+
+        <h2 class="qm-question-text">What is the capital of France?</h2>
+
+        <div class="qm-answers-grid">
+          <button class="qm-answer-btn" data-answer="London">
+            <span class="qm-answer-key">1</span>
+            <span class="qm-answer-text">London</span>
+          </button>
+          <button class="qm-answer-btn" data-answer="Paris">
+            <span class="qm-answer-key">2</span>
+            <span class="qm-answer-text">Paris</span>
+          </button>
+          <button class="qm-answer-btn" data-answer="Berlin">
+            <span class="qm-answer-key">3</span>
+            <span class="qm-answer-text">Berlin</span>
+          </button>
+          <button class="qm-answer-btn" data-answer="Madrid">
+            <span class="qm-answer-key">4</span>
+            <span class="qm-answer-text">Madrid</span>
+          </button>
+        </div>
+
+        <p class="qm-keyboard-hint">
+          <i class="fa-regular fa-keyboard"></i> Press 1-4 to select
+        </p>
+
+        <div class="qm-score-panel">
+          <div class="qm-score-item">
+            <div class="qm-score-label">Score</div>
+            <div class="qm-score-value">0</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="./js/ui-controls.js"></script>
+  <script src="./js/index.js" type="module"></script>
+</body>
+
+</html>
